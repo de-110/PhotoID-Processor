@@ -59,7 +59,8 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
                     print('please select and id type!!')
 
     def create_photoID(self, size, num_of_photos, selected_file):
-        for photos in num_of_photos:
+        for photos in range(num_of_photos):
+            print('test')
             self.document.add_picture(selected_file, width=Inches(size), height=Inches(size))
         self.save_file()
 
