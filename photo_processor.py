@@ -17,7 +17,7 @@ class PhotoID_Processor(QMainWindow):
 
     def open_file(self):
         print("open file")
-        selected_file = self.open_file_dialog('open_file')
+        selected_file = self.open_dialog('open_file')
         print(selected_file)
     
     def process_file(self):
@@ -25,7 +25,7 @@ class PhotoID_Processor(QMainWindow):
 
     def save_file(self):
         print("save file")
-        selected_file = self.open_file_dialog('save_file')
+        selected_file = self.open_dialog('save_file')
         print(selected_file)
         
     def open_dialog(self, mode):
