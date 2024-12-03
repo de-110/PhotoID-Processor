@@ -53,7 +53,7 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
                     self.create_photoID(2, num_of_photos, self.selected_file)
 
                 case '1x1':
-                    print('generate 1x1 images')
+                    self.create_photoID(2, num_of_photos, self.selected_file)
                 
                 case '':
                     print('please select and id type!!')
@@ -61,11 +61,12 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
     def create_photoID(self, size, num_of_photos, selected_file):
         for photos in num_of_photos:
             self.document.add_picture(selected_file, width=Inches(size), height=Inches(size))
-        self.document.save('test.docx')
+        self.save_file()
 
     def save_file(self):
         print("save file")
         self.selected_file = self.open_dialog('save_file')
+        self.document.save(self.selected_file)
     
     def preview_image(self):
         pixmap = QPixmap(self.selected_file)
