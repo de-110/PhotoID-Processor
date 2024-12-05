@@ -6,6 +6,7 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt
 from PyQt6 import uic
 
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import Inches
 from docx import Document
 
@@ -50,24 +51,43 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
         else:
             match id_type:
                 case '2x2':                    
-                    self.create_photoID(2, num_of_photos, self.selected_file)
+                    self.create_photoID(2, num_of_photos, self.selected_file, id_type)
 
                 case '1x1':
-                    self.create_photoID(2, num_of_photos, self.selected_file)
+                    self.create_photoID(1, num_of_photos, self.selected_file, id_type)
                 
                 case '':
                     print('please select and id type!!')
 
-    def create_photoID(self, size, num_of_photos, selected_file):
-        for photos in range(num_of_photos):
-            print('test')
-            self.document.add_picture(selected_file, width=Inches(size), height=Inches(size))
+    def create_photoID(self, size, num_of_photos, selected_file, id_type):
+        photos = int(num_of_photos)
+        counter = 0
+        
+        p = self.document.add_paragraph()
+        p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        r = p.add_run()
+        
+        for id in range(photos):
+            counter += 1
+            
+            r.add_picture(selected_file, width=Inches(size), height=Inches(size))
+            match (counter, id_type):
+                case (2, '2x2'):
+                    r.add_break()
+                    counter = 0
+                case (4, '1x1'):
+                    r.add_break()
+                    counter = 0
+
         self.save_file()
 
     def save_file(self):
         print("save file")
-        self.selected_file = self.open_dialog('save_file')
-        self.document.save(self.selected_file)
+        try:
+            save_to = self.open_dialog('save_file')
+            self.document.save(save_to)
+        except FileNotFoundError:
+            return
     
     def preview_image(self):
         pixmap = QPixmap(self.selected_file)
@@ -79,14 +99,14 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
 
         match mode:
             case 'open_file':
-                filename, _ = dialog.getOpenFileName(
-                    self,
-                    "Open File",
-                    desktop,
-                    "Images (*.png *.jpg)"
-                )
-                return filename
-            
+                    filename, _ = dialog.getOpenFileName(
+                        self,
+                        "Open File",
+                        desktop,
+                        "Images (*.png *.jpg)"
+                    )
+                    return filename
+                          
             case 'save_file':
                 filename, _ = dialog.getSaveFileName(
                     self,
