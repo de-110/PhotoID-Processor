@@ -2,7 +2,7 @@ import sys
 import os
 
 from PyQt6.QtWidgets import QMainWindow, QFileDialog
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QPixmap, QIntValidator
 from PyQt6.QtCore import Qt
 from PyQt6 import uic
 
@@ -45,8 +45,10 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
         id_type = self.id_type.currentText()
         num_of_photos = self.num_of_photos.text()
 
-        if not self.selected_file or not num_of_photos:
-            print('configuration are empty cannot continue!!')
+        if not self.selected_file:
+            print('please select a photo to process!!')
+        if not num_of_photos:
+            print('please input how many photos to process!!')
 
         else:
             match id_type:
