@@ -3,7 +3,7 @@ import os
 
 from PyQt6.QtWidgets import QMainWindow, QFileDialog
 from PyQt6.QtGui import QPixmap, QIntValidator
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QObject, QEvent
 from PyQt6 import uic
 
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
@@ -13,6 +13,19 @@ from docx import Document
 desktop = os.path.join(os.path.expanduser("~"))
 
 photo_processor_ui, classinfo = uic.loadUiType('photo_processor.ui')
+
+class img_path_drop_handler(QObject):
+    def eventFilter(self, watched, event):
+        if event.type() == QEvent.Type.DragEnter:
+            event.accept()
+        if event.type() == QEvent.Type.Drop:
+            md = event.mimeData()
+            for url in event.mimeData().urls():
+                url = url
+            if md.hasUrls():
+                watched.setText(url.toLocalFile())
+                return True
+        return super().eventFilter(watched, event)
 
 class PhotoID_Processor(QMainWindow, photo_processor_ui):
     def __init__(self):
@@ -34,6 +47,8 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
         self.process_button.clicked.connect(self.handle_file)
         
         self.num_of_photos.textChanged.connect(self.validate_input)
+        
+        self.img_path.installEventFilter(img_path_drop_handler(self))
     
     def set_img_path(self):
         if not self.selected_file:
@@ -56,8 +71,10 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
 
         if not self.selected_file:
             print('please select a photo to process!!')
+            return
         if not num_of_photos:
             print('please input how many photos to process!!')
+            return
 
         else:
             match id_type:
