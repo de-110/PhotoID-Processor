@@ -27,8 +27,13 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
 
         self.id_type.addItems(['','2x2', '1x1'])
 
+        validator = QIntValidator(1, 99)
+        self.num_of_photos.setValidator(validator)
+
         self.browse_button.clicked.connect(self.open_file)
         self.process_button.clicked.connect(self.handle_file)
+        
+        self.num_of_photos.textChanged.connect(self.validate_input)
     
     def set_img_path(self):
         if not self.selected_file:
@@ -41,6 +46,10 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
         self.preview_image()
         self.set_img_path()
     
+    def validate_input(self):
+        if self.num_of_photos.text() == '0':
+            self.num_of_photos.clear()
+
     def handle_file(self):
         id_type = self.id_type.currentText()
         num_of_photos = self.num_of_photos.text()
