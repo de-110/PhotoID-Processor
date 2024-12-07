@@ -13,9 +13,12 @@ try:
 except ImportError:
     pass
 
+base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
+icon_path = os.path.join(base_path, 'main-icon.png')
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon("main-icon.png"))
+    app.setWindowIcon(QIcon(icon_path))
     app.setApplicationName("PhotoID Processor")
     app.setStyle(QStyleFactory.create('Fusion'))
     
