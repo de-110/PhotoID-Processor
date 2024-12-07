@@ -47,8 +47,9 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
         self.process_button.clicked.connect(self.handle_file)
         
         self.num_of_photos.textChanged.connect(self.validate_input)
-        
+
         self.img_path.installEventFilter(img_path_drop_handler(self))
+        self.img_path.textChanged.connect(lambda: self.open_file('img_path'))
     
     def set_img_path(self):
         if not self.selected_file:
@@ -56,8 +57,11 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
         else:
             self.img_path.setText(self.selected_file)
 
-    def open_file(self):
-        self.selected_file = self.open_dialog('open_file')
+    def open_file(self, field):
+        if field == 'img_path':
+            self.selected_file = self.img_path.text()
+        else:
+            self.selected_file = self.open_dialog('open_file')
         self.preview_image()
         self.set_img_path()
     
