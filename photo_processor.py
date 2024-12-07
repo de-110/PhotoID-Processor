@@ -1,7 +1,7 @@
 import sys
 import os
 
-from PyQt6.QtWidgets import QMainWindow, QFileDialog
+from PyQt6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PyQt6.QtGui import QPixmap, QIntValidator
 from PyQt6.QtCore import Qt, QObject, QEvent
 from PyQt6 import uic
@@ -50,7 +50,7 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
 
         self.img_path.installEventFilter(img_path_drop_handler(self))
         self.img_path.textChanged.connect(lambda: self.open_file('img_path'))
-    
+
     def set_img_path(self):
         if not self.selected_file:
             self.img_path.setText(desktop)
@@ -74,10 +74,10 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
         num_of_photos = self.num_of_photos.text()
 
         if not self.selected_file:
-            print('please select a photo to process!!')
+            QMessageBox.warning(self, 'Warning', 'Please select an image!')
             return
         if not num_of_photos:
-            print('please input how many photos to process!!')
+            QMessageBox.warning(self, 'Warning', 'Please input how many photos to process!')
             return
 
         else:
@@ -89,7 +89,7 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
                     self.create_photoID(1, num_of_photos, self.selected_file, id_type)
                 
                 case '':
-                    print('please select and id type!!')
+                    QMessageBox.warning(self, 'Warning', 'Please select an ID TYPE!')
 
     def create_photoID(self, size, num_of_photos, selected_file, id_type):
         photos = int(num_of_photos)
@@ -131,13 +131,13 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
 
         match mode:
             case 'open_file':
-                    filename, _ = dialog.getOpenFileName(
-                        self,
-                        "Open File",
-                        desktop,
-                        "Images (*.png *.jpg)"
-                    )
-                    return filename
+                filename, _ = dialog.getOpenFileName(
+                    self,
+                    "Open File",
+                    desktop,
+                    "Images (*.png *.jpg)"
+                )
+                return filename
                           
             case 'save_file':
                 filename, _ = dialog.getSaveFileName(
