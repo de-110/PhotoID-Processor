@@ -33,6 +33,7 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setFixedSize(self.size())
     
         self.document = Document()
 
