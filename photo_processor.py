@@ -114,7 +114,6 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
         self.save_file()
 
     def save_file(self):
-        print("save file")
         try:
             save_to = self.open_dialog('save_file')
             self.document.save(save_to)
@@ -123,6 +122,10 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
     
     def preview_image(self):
         pixmap = QPixmap(self.selected_file)
+        
+        if pixmap.isNull():
+            return
+        
         scaled_pixmap = pixmap.scaled(self.preview_img.size(), Qt.AspectRatioMode.KeepAspectRatio)
         self.preview_img.setPixmap(scaled_pixmap)
         
