@@ -12,7 +12,9 @@ from docx import Document
 
 desktop = os.path.join(os.path.expanduser("~"))
 
-photo_processor_ui, classinfo = uic.loadUiType('photo_processor.ui')
+base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
+ui_path = os.path.join(base_path, 'photo_processor.ui')
+photo_processor_ui, classinfo = uic.loadUiType(ui_path)
 
 class img_path_drop_handler(QObject):
     def eventFilter(self, watched, event):
@@ -73,7 +75,7 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
         id_type = self.id_type.currentText()
         num_of_photos = self.num_of_photos.text()
 
-        if not self.selected_file:
+        if not self.selected_file or self.selected_file == desktop:
             QMessageBox.warning(self, 'Warning', 'Please select an image!')
             return
         if not num_of_photos:
@@ -92,24 +94,27 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
                     QMessageBox.warning(self, 'Warning', 'Please select an ID TYPE!')
 
     def create_photoID(self, size, num_of_photos, selected_file, id_type):
-        photos = int(num_of_photos)
-        counter = 0
-        
-        p = self.document.add_paragraph()
-        p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-        r = p.add_run()
-        
-        for id in range(photos):
-            counter += 1
+        try:
+            photos = int(num_of_photos)
+            counter = 0
             
-            r.add_picture(selected_file, width=Inches(size), height=Inches(size))
-            match (counter, id_type):
-                case (2, '2x2'):
-                    r.add_break()
-                    counter = 0
-                case (4, '1x1'):
-                    r.add_break()
-                    counter = 0
+            p = self.document.add_paragraph()
+            p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            r = p.add_run()
+            
+            for id in range(photos):
+                counter += 1
+                
+                r.add_picture(selected_file, width=Inches(size), height=Inches(size))
+                match (counter, id_type):
+                    case (2, '2x2'):
+                        r.add_break()
+                        counter = 0
+                    case (4, '1x1'):
+                        r.add_break()
+                        counter = 0
+        except Exception as e:
+            return
 
         self.save_file()
 
@@ -117,7 +122,8 @@ class PhotoID_Processor(QMainWindow, photo_processor_ui):
         try:
             save_to = self.open_dialog('save_file')
             self.document.save(save_to)
-        except FileNotFoundError:
+        except Exception as e:
+            QMessageBox.warning(self, 'Warning', 'Word document is currently open in another tab, please close!')
             return
     
     def preview_image(self):
